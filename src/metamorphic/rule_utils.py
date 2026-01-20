@@ -282,6 +282,10 @@ def extract_float(string: str) -> float:
     :param string: the string the float number is to be extracted
     :return: the first float number inside the string
     """
+    # Handle None input gracefully
+    if string is None:
+        return None
+    
     # remove , as marker of thousands
     pattern = r'(?<=\d),(?=\d)'
     cleaned_text = re.sub(pattern, '', string)
