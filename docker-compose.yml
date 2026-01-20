@@ -16,11 +16,11 @@ services:
     networks:
       - sensei-network
     healthcheck:
-      test: [ "CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/')" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:5000/chat" ]
       interval: 5s
       timeout: 10s
-      retries: 10
-      start_period: 30s
+      retries: 15
+      start_period: 45s
 
   # SENSEI User Simulator
   sensei:

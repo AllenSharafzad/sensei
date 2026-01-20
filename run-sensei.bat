@@ -47,6 +47,7 @@ if "%API_KEY_SET%"=="false" (
     echo.
 )
 
+:MENU
 echo.
 echo Choose an option:
 echo   1. Run chatbot test (uses cached build)
@@ -86,9 +87,16 @@ if "%choice%"=="1" (
     docker-compose down
     echo Done!
 ) else if "%choice%"=="6" (
+    echo Goodbye!
     exit /b 0
 ) else (
     echo Invalid choice!
+    goto MENU
 )
 
-pause
+echo.
+echo ============================================
+set /p "continue=Return to menu? (Y/N): "
+if /i "%continue%"=="Y" goto MENU
+if /i "%continue%"=="y" goto MENU
+echo Goodbye!
