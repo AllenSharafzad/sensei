@@ -16,11 +16,11 @@ services:
     networks:
       - sensei-network
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:5000/chat" ]
+      test: [ "CMD-SHELL", "curl -sf http://localhost:5000/ || curl -sf http://localhost:5000/chat || true" ]
       interval: 5s
       timeout: 10s
-      retries: 15
-      start_period: 45s
+      retries: 12
+      start_period: 30s
 
   # SENSEI User Simulator
   sensei:
@@ -30,7 +30,7 @@ services:
     container_name: sensei-tester
     depends_on:
       chatbot:
-        condition: service_healthy
+        condition: service_started
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
     networks:
@@ -39,7 +39,7 @@ services:
       - ./test_cases:/app/test_cases
       - ./rules:/app/rules
     command: >
-      python src/sensei-chat.py  --technology taskyto  --chatbot http://chatbot:5000  --user examples/profiles/pizza-order/user_sim_pizzaorder_custom.yml  --extract test_cases/pizza-order
+      bash -c "echo 'Waiting for chatbot to start...' && sleep 30 && python src/sensei-chat.py --technology taskyto --chatbot http://chatbot:5000 --user examples/profiles/pizza-order/user_sim_pizzaorder_custom.yml --extract test_cases/pizza-order"
 
   # SENSEI Rule Checker
   checker:

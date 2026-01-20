@@ -11,9 +11,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install taskyto
+# Copy the patched taskyto package (with 0.0.0.0 binding)
+COPY taskyto/ ./taskyto/
+
+# Install taskyto from local patched copy
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir taskyto
+    pip install --no-cache-dir ./taskyto/
 
 # Copy chatbot examples
 COPY taskyto/examples/ ./examples/
