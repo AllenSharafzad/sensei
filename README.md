@@ -536,3 +536,28 @@ sensei-check.py [-h] --rules RULES --conversations CONVERSATIONS
 
 ```bash
 python sensei-check.py --rules ./rules --conversations ./convos --verbose --dump stats.csv
+```
+
+---
+
+## Credits & Attribution
+
+This repository is a fork of the original **SENSEI** project, an end-to-end testing framework for chatbots.
+
+### Original Authors
+
+**SENSEI** was created by:
+- [Modelling and Software Engineering Research Group (MISO)](http://miso.es) - Universidad Autónoma de Madrid, Spain
+- [Models & Languages Lab](https://models-lab.github.io/team/) - Universidad de Murcia, Spain
+
+### Original Repository
+
+- GitHub: [https://github.com/sensei-chat/sensei](https://github.com/sensei-chat/sensei)
+
+### License
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+### Docker Setup Contributions
+
+The Docker configuration and easy-run scripts (`run-sensei.bat`, `run-sensei.sh`, `docker-compose.yml`) were added by [Allen Sharafzad](https://github.com/AllenSharafzad) to simplify deployment and sharing.
