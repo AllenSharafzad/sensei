@@ -1,0 +1,61 @@
+# SENSEI - Easy Docker Setup
+# Run chatbot tests without any coding knowledge!
+# API key is read automatically from .env file
+
+services:
+  # Pizza Order Chatbot (Test Target)
+  chatbot:
+    build:
+      context: .
+      dockerfile: Dockerfile.chatbot
+    container_name: sensei-chatbot
+    ports:
+      - "5000:5000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    networks:
+      - sensei-network
+    healthcheck:
+      test: [ "CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/')" ]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+  # SENSEI User Simulator
+  sensei:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sensei-tester
+    depends_on:
+      chatbot:
+        condition: service_healthy
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    networks:
+      - sensei-network
+    volumes:
+      - ./test_cases:/app/test_cases
+      - ./rules:/app/rules
+    command: >
+      python src/sensei-chat.py  --technology taskyto  --chatbot http://chatbot:5000  --user examples/profiles/pizza-order/user_sim_pizzaorder_custom.yml  --extract test_cases/pizza-order
+
+  # SENSEI Rule Checker
+  checker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sensei-checker
+    profiles: [ "check" ]
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./test_cases:/app/test_cases
+      - ./rules:/app/rules
+    command: >
+      python src/sensei-check.py  --rules rules  --conversations test_cases/pizza-order  --verbose
+
+networks:
+  sensei-network:
+    driver: bridge

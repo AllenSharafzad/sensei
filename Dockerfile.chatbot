@@ -1,0 +1,35 @@
+# Taskyto Chatbot Server
+FROM python:3.11-slim
+
+LABEL maintainer="SENSEI Project"
+LABEL description="Taskyto chatbot server for SENSEI testing"
+
+WORKDIR /app
+
+# Install system dependencies for healthcheck
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install taskyto
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir taskyto
+
+# Copy chatbot examples
+COPY taskyto/examples/ ./examples/
+
+# Copy keys.properties template to use env var
+RUN echo '[keys]' > /app/keys.properties
+
+# Create entrypoint script that writes API key to keys.properties
+RUN echo '#!/bin/bash\n\
+    echo "[keys]" > /app/keys.properties\n\
+    echo "OPENAI_API_KEY=$OPENAI_API_KEY" >> /app/keys.properties\n\
+    exec taskyto-serve --chatbot examples/yaml/pizza-order' > /app/entrypoint.sh && \
+    chmod +x /app/entrypoint.sh
+
+# Expose port for the chatbot server
+EXPOSE 5000
+
+# Start the pizza-order chatbot with the entrypoint
+ENTRYPOINT ["/bin/bash", "/app/entrypoint.sh"]
